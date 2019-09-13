@@ -11,7 +11,4 @@ var ctxt = crret.ctxt
 
 loop((dt) => {
     dt /= 1000
-
-
-    
 })
