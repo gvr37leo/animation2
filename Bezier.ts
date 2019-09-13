@@ -43,11 +43,8 @@ class Bezier{
     static constantDistanceWaypoints(waypoints:Vector[],numberOfWaypoints:number){
         var length = this.calcLength(waypoints);
         var lengthPerWaypoint = length / numberOfWaypoints
+        var result:Vector[] = [waypoints[0].c()]
         
-        var result:Vector[] = [
-            waypoints[0].c()
-        ]
-
         var budget = 0
         for(var i = 1; i < waypoints.length; i++){
             var a = waypoints[i - 1]
@@ -57,12 +54,14 @@ class Bezier{
             budget += dist2waypoint
             
             while(budget > lengthPerWaypoint){
+                startbudget
+                var dist2newwaypoint = lengthPerWaypoint - startbudget
+                dist2waypoint
                 var ratio = 0
                 budget -= lengthPerWaypoint
                 result.push(a.lerp(b,ratio))
             }
         }
-
         result.push(last(waypoints).c())
         return result
     }
