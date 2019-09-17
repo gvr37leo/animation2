@@ -83,31 +83,61 @@ class Bezier{
 
 class BezierControl{
     ctxt: CanvasRenderingContext2D
+    visualCurve:Vector[]
+    cachedXCurve:Vector[]
+    handles:Handle[]
+    precision = 21
+
     constructor(){
         var res = createCanvas(200,200)
-
         this.ctxt = res.ctxt
-        var curve = Bezier.computeWaypoints(11,
-            new Vector(0,0),
-            new Vector(1,1),
-            new Vector(0,1),
-            new Vector(1,0),
-        )
-        for(var p of curve){
-            p.x = map(p.x,0,1,0,200)
-            p.y = map(p.y,0,1,200,0)
-        }
-        this.line(curve)
+        var clickmanager = new ClickManager(res.canvas)
+        clickmanager.listenToDocument()
+        var a = new Handle(new Vector(0,0),clickmanager)
+        var b = new Handle(new Vector(200,200),clickmanager)
+        var c = new Handle(new Vector(0,200),clickmanager)
+        var d = new Handle(new Vector(200,0),clickmanager)
+        this.handles = [a,b,c,d]
+        this.handles.forEach(h => {
+            h.pos.onchange.listen(e => {
+                this.update()
+                this.draw()
+            })
+        })
+        this.update()
+        this.draw()
+        
     }
 
-    line(line:Vector[]){
-        this.ctxt.beginPath();
+    update(){
+        this.visualCurve = Bezier.computeWaypoints(this.precision,this.handles[0].pos.get(),this.handles[1].pos.get(),this.handles[2].pos.get(),this.handles[3].pos.get())
+        this.cachedXCurve = Bezier.cacheSlopeX(this.visualCurve,this.precision)
+
+
+        // for(var p of curve){
+        //     p.x = map(p.x,0,1,0,200)
+        //     p.y = map(p.y,0,1,200,0)
+        // }
+    }
+
+    draw(){
+        this.ctxt.clearRect(0,0,200,200)
+        this.handles.forEach(h => {
+            h.draw(this.ctxt)
+        })
+        this.line(this.ctxt,[this.handles[0].pos.get(),this.handles[1].pos.get(),])
+        this.line(this.ctxt,[this.handles[2].pos.get(),this.handles[3].pos.get()])
+        this.line(this.ctxt, this.visualCurve)
+    }
+
+    line(ctxt,line:Vector[]){
+        ctxt.beginPath();
         var f = first(line)
-        this.ctxt.moveTo(f.x,f.y)
+        ctxt.moveTo(f.x,f.y)
         for(var i = 1; i < line.length; i++){
             var p = line[i]
-            this.ctxt.lineTo(p.x,p.y)
+            ctxt.lineTo(p.x,p.y)
         }
-        this.ctxt.stroke();
+        ctxt.stroke();
     }
 }

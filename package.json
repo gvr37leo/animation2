@@ -7,7 +7,7 @@
     "bezierx": "^1.1.4",
     "eventsystemx": "^1.2.0",
     "express": "*",
-    "rect3x": "*",
+    "rect3x": "^1.0.0",
     "utilsx": "^1.13.0",
     "vectorx": "^3.3.1"
   },

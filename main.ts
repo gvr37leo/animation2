@@ -1,23 +1,14 @@
 /// <reference path="node_modules/utilsx/utils.ts" />
 /// <reference path="node_modules/vectorx/vector.ts" />
+/// <reference path="rect.ts" />
+/// <reference path="node_modules/eventsystemx/eventsystem.ts" />
 /// <reference path="Bezier.ts" />
+/// <reference path="handle.ts" />
+/// <reference path="clickmanager.ts" />
+
 
 
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
-
-var curve = Bezier.computeWaypoints(11,
-    new Vector(0,0),
-    new Vector(10,10),
-    new Vector(0,10),
-    new Vector(10,0),
-)
-var constant = Bezier.constantDistanceWaypoints(curve,11)
-var cached = Bezier.cacheSlopeX(curve,11)
-
-loop((dt) => {
-    dt /= 1000
-})
-
 var bc = new BezierControl()
 
 
