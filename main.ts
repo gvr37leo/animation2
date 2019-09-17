@@ -4,9 +4,6 @@
 
 
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
-var crret = createCanvas(screensize.x,screensize.y)
-var canvas = crret.canvas
-var ctxt = crret.ctxt
 
 var curve = Bezier.computeWaypoints(11,
     new Vector(0,0),
@@ -20,6 +17,9 @@ var cached = Bezier.cacheSlopeX(curve,11)
 loop((dt) => {
     dt /= 1000
 })
+
+var bc = new BezierControl()
+
 
 function first<T>(arr:T[]):T{
     return arr[0]

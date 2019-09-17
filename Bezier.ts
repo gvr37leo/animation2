@@ -1,6 +1,4 @@
 class Bezier{
-
-
     constructor(){
 
     }
@@ -41,7 +39,7 @@ class Bezier{
 
     static constantDistanceWaypoints(waypoints:Vector[],numberOfWaypoints:number){
         var length = this.calcLength(waypoints);
-        var spacing = length / numberOfWaypoints
+        var spacing = length / (numberOfWaypoints - 1)
         var result:Vector[] = [first(waypoints).c()]
         
         var budget = 0
@@ -80,5 +78,36 @@ class Bezier{
             point.y = map(point.x,a.x,b.x,a.y,b.y)
         }
         return result
+    }
+}
+
+class BezierControl{
+    ctxt: CanvasRenderingContext2D
+    constructor(){
+        var res = createCanvas(200,200)
+
+        this.ctxt = res.ctxt
+        var curve = Bezier.computeWaypoints(11,
+            new Vector(0,0),
+            new Vector(1,1),
+            new Vector(0,1),
+            new Vector(1,0),
+        )
+        for(var p of curve){
+            p.x = map(p.x,0,1,0,200)
+            p.y = map(p.y,0,1,200,0)
+        }
+        this.line(curve)
+    }
+
+    line(line:Vector[]){
+        this.ctxt.beginPath();
+        var f = first(line)
+        this.ctxt.moveTo(f.x,f.y)
+        for(var i = 1; i < line.length; i++){
+            var p = line[i]
+            this.ctxt.lineTo(p.x,p.y)
+        }
+        this.ctxt.stroke();
     }
 }
