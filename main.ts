@@ -8,6 +8,14 @@ var crret = createCanvas(screensize.x,screensize.y)
 var canvas = crret.canvas
 var ctxt = crret.ctxt
 
+var curve = Bezier.computeWaypoints(11,
+    new Vector(0,0),
+    new Vector(10,10),
+    new Vector(0,10),
+    new Vector(10,0),
+)
+var constant = Bezier.constantDistanceWaypoints(curve,11)
+var cached = Bezier.cacheSlopeX(curve,11)
 
 loop((dt) => {
     dt /= 1000
@@ -16,3 +24,8 @@ loop((dt) => {
 function first<T>(arr:T[]):T{
     return arr[0]
 }
+
+function map(val:number,from1:number,from2:number,to1:number,to2:number):number{
+    return lerp(to1,to2,inverseLerp(val,from1,from2))
+}
+

@@ -16,12 +16,11 @@ class Bezier{
     }
 
     static computeWaypoints(numberOfWaypoints:number,p0:Vector,p1:Vector,p2:Vector,p3:Vector){
-        var detail = 1 / numberOfWaypoints;
+        numberOfWaypoints--
         var waypoints:Vector[] = [];
-        for(var t = 0; t < 1; t += detail){
-            waypoints.push(Bezier.getBezierPoint(t, p0,p1,p2,p3))
+        for(var i = 0; i <= numberOfWaypoints; i++){
+            waypoints.push(Bezier.getBezierPoint(i / numberOfWaypoints, p0,p1,p2,p3))
         }
-        waypoints.push(p3.c())
         return waypoints;
     }
 
@@ -43,35 +42,29 @@ class Bezier{
     static constantDistanceWaypoints(waypoints:Vector[],numberOfWaypoints:number){
         var length = this.calcLength(waypoints);
         var spacing = length / numberOfWaypoints
-        var result:Vector[] = [waypoints[0].c()]
+        var result:Vector[] = [first(waypoints).c()]
         
         var budget = 0
-        for(var i = 1; i < waypoints.length; i++){
-            var a = waypoints[i - 1]
-            var b = waypoints[i]
+        for(var i = 0; i < waypoints.length - 1; i++){
+            var a = waypoints[i]
+            var b = waypoints[i + 1]
             var length = a.to(b).length()
             var remainingLength = budget
             budget += length
-            budget -= Math.floor((remainingLength + length) / spacing) * spacing
-            for(var i = 0; i * spacing < remainingLength + length; i++){
-                result.push(a.lerp(b,(i * spacing - remainingLength) / length))
+            var fits = Math.floor((remainingLength + length) / spacing) 
+            budget -= fits * spacing
+            for(var j = 1; j <= fits; j++){
+                result.push(a.lerp(b,(j * spacing - remainingLength) / length))
             }
         }
         result.push(last(waypoints).c())
         return result
     }
 
-    static function(start,rest,spacing){
-        var ratios = []
-        for(var i = 0; i * spacing < start + rest; i++){
-            ratios.push((i * spacing - start) / rest)
-        }
-    }
-
-
     //points need to be guaranteed left to tight
     static cacheSlopeX(points:Vector[],samplePoints:number):Vector[]{
         var result = []
+        samplePoints--
         for(var i = 0; i <= samplePoints; i++){
             result.push(new Vector(lerp(first(points).x, last(points).x, i / samplePoints), 0))
         }
