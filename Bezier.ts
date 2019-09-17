@@ -66,17 +66,24 @@ class Bezier{
         return result
     }
 
-    static rootfind(x:number,points:Vector[]):number{
-        for(var i = 0; i < points.length - 1; i++){
-            var a = points[i]
-            var b = points[i + 1]
-            if(inRange(a.x,b.x,x)){
-                if(a.x == b.x)return a.y
-                map(x,a.x,b.x,a.y,b.y)
-            }
+
+    //points need to be guaranteed left to tight
+    static cacheSlopeX(points:Vector[],samplePoints:number):Vector[]{
+        var result = []
+        for(var i = 0; i <= samplePoints; i++){
+            result.push(new Vector(lerp(first(points).x, last(points).x, i / samplePoints), 0))
         }
-        throw 0
+        var sectionIndex = 0
+        for(var point of result){
+            var a = points[sectionIndex]
+            var b = points[sectionIndex + 1]
+            while(!inRange(a.x,b.x,point.x)){
+                sectionIndex++
+                a = points[sectionIndex]
+                b = points[sectionIndex + 1]
+            }
+            point.y = map(point.x,a.x,b.x,a.y,b.y)
+        }
+        return result
     }
-
-
 }

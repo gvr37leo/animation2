@@ -12,3 +12,7 @@ var ctxt = crret.ctxt
 loop((dt) => {
     dt /= 1000
 })
+
+function first<T>(arr:T[]):T{
+    return arr[0]
+}
