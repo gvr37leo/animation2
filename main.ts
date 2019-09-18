@@ -6,10 +6,20 @@
 /// <reference path="handle.ts" />
 /// <reference path="clickmanager.ts" />
 
-
+var reddot = new Anim()
+reddot.animType = AnimType.repeat
+reddot.stopwatch.start()
 
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
 var bc = new BezierControl()
+
+
+loop(dt => {
+    var pos = Bezier.tween(reddot.get(),bc.normalizedCachedXCurve)
+    bc.draw()
+    bc.denormalize(pos)
+    pos.draw(bc.ctxt)
+})
 
 
 function first<T>(arr:T[]):T{

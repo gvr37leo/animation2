@@ -84,19 +84,21 @@ class Bezier{
 class BezierControl{
     ctxt: CanvasRenderingContext2D
     visualCurve:Vector[]
-    cachedXCurve:Vector[]
+    normalizedCachedXCurve:Vector[]
     handles:Handle[]
     precision = 21
+    canvassize: Vector
 
     constructor(){
+        this.canvassize = new Vector(200,200)
         var res = createCanvas(200,200)
         this.ctxt = res.ctxt
         var clickmanager = new ClickManager(res.canvas)
         clickmanager.listenToDocument()
-        var a = new Handle(new Vector(0,0),clickmanager)
-        var b = new Handle(new Vector(200,200),clickmanager)
-        var c = new Handle(new Vector(0,200),clickmanager)
-        var d = new Handle(new Vector(200,0),clickmanager)
+        var a = new Handle(new Vector(0,200),clickmanager)
+        var b = new Handle(new Vector(200,0),clickmanager)
+        var c = new Handle(new Vector(0,0),clickmanager)
+        var d = new Handle(new Vector(200,200),clickmanager)
         this.handles = [a,b,c,d]
         this.handles.forEach(h => {
             h.pos.onchange.listen(e => {
@@ -111,13 +113,7 @@ class BezierControl{
 
     update(){
         this.visualCurve = Bezier.computeWaypoints(this.precision,this.handles[0].pos.get(),this.handles[1].pos.get(),this.handles[2].pos.get(),this.handles[3].pos.get())
-        this.cachedXCurve = Bezier.cacheSlopeX(this.visualCurve,this.precision)
-
-
-        // for(var p of curve){
-        //     p.x = map(p.x,0,1,0,200)
-        //     p.y = map(p.y,0,1,200,0)
-        // }
+        this.normalizedCachedXCurve = Bezier.cacheSlopeX(this.nall(this.visualCurve), this.precision)
     }
 
     draw(){
@@ -128,6 +124,22 @@ class BezierControl{
         this.line(this.ctxt,[this.handles[0].pos.get(),this.handles[1].pos.get(),])
         this.line(this.ctxt,[this.handles[2].pos.get(),this.handles[3].pos.get()])
         this.line(this.ctxt, this.visualCurve)
+    }
+
+    nall(arr:Vector[]){
+        return arr.map(v => this.normalize(v.c()))
+    }
+
+    normalize(v:Vector){
+        v.x = map(v.x,0,this.canvassize.x,0,1)
+        v.y = map(v.y,this.canvassize.y,0,0,1)
+        return v
+    }
+
+    denormalize(v:Vector){
+        v.x = map(v.x,0,1,0,this.canvassize.x)
+        v.y = map(v.y,0,1,this.canvassize.y,0)
+        return v
     }
 
     line(ctxt,line:Vector[]){
