@@ -154,7 +154,8 @@ class BezierControl{
     }
 }
 
-function IK(bones:Vector[],target:Vector,error:number):Vector[]{
+function FABRIK(bones:Vector[],target:Vector,error:number):Vector[]{
+    var maxIterations = 10
     var end = FK(bones)
     while(end.to(target).length() > error){
         finalToRoot()
@@ -170,8 +171,14 @@ function FK(bones:Vector[]):Vector{
     return res;
 }
 
-function finalToRoot(){
-
+function finalToRoot(vectors:Vector[],endEffector:Vector){
+    
+    for(var i = vectors.length; i > 1; i--){
+        var a = vectors[i]
+        var b = vectors[i - 1]
+        var section = a.to(b)
+        var length = section.length()
+    }
 }
 
 function rootToFinal(){
