@@ -15,10 +15,10 @@ var bc = new BezierControl()
 
 
 loop(dt => {
-    var pos = Bezier.tween(reddot.get(),bc.normalizedCachedXCurve)
-    bc.draw()
-    bc.denormalize(pos)
-    pos.draw(bc.ctxt)
+    // var pos = Bezier.tween(reddot.get(),bc.normalizedCachedXCurve)
+    // bc.draw()
+    // bc.denormalize(pos)
+    // pos.draw(bc.ctxt)
 })
 
 

@@ -153,3 +153,27 @@ class BezierControl{
         ctxt.stroke();
     }
 }
+
+function IK(bones:Vector[],target:Vector,error:number):Vector[]{
+    var end = FK(bones)
+    while(end.to(target).length() > error){
+        finalToRoot()
+        rootToFinal()
+        end = FK(bones)
+    }
+    return bones
+}
+
+function FK(bones:Vector[]):Vector{
+    var res = new Vector(0,0)
+    bones.forEach(b => res.add(b))
+    return res;
+}
+
+function finalToRoot(){
+
+}
+
+function rootToFinal(){
+
+}
