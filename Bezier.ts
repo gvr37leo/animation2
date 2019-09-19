@@ -154,33 +154,54 @@ class BezierControl{
     }
 }
 
-function FABRIK(bones:Vector[],target:Vector,error:number):Vector[]{
+function FK(bones:Vector[]):Vector{
+    return bones.reduce((p,c) => p.add(c),new Vector(0,0))
+}
+
+//bones are relative
+function FABRIK(bones:Vector[],endEffector:Vector,maxError:number):Vector[]{
     var maxIterations = 10
     var end = FK(bones)
-    while(end.to(target).length() > error){
-        finalToRoot()
-        rootToFinal()
-        end = FK(bones)
+    var totallength = bones.reduce((p,c) => p += c.length(),0)
+    var lengths = calcSegmentLengths(bones)
+    if(totallength < first(bones).to(endEffector).length()){
+        for(var i = 0; i < maxIterations && end.to(endEffector).length() > maxError; i++){
+            backward(bones,endEffector,lengths)
+            forward(bones,endEffector,lengths)
+        }
+    }else{
+        for(var bone of bones){
+            bone = bone.to(endEffector).normalize().scale(bone.length())
+        }
     }
     return bones
 }
 
-function FK(bones:Vector[]):Vector{
-    var res = new Vector(0,0)
-    bones.forEach(b => res.add(b))
-    return res;
-}
+//vectors are absolute 
+function backward(vectors:Vector[],endEffector:Vector,segmentLengths:number[]){
+    var lengths = calcSegmentLengths(vectors)
 
-function finalToRoot(vectors:Vector[],endEffector:Vector){
-    
-    for(var i = vectors.length; i > 1; i--){
-        var a = vectors[i]
-        var b = vectors[i - 1]
-        var section = a.to(b)
-        var length = section.length()
+    last(vectors).overwrite(endEffector)
+    for(var i = vectors.length - 2; i >= 0; i--){
+        var a = vectors[i + 1]
+        var b = vectors[i]
+        a.overwrite(b.to(a).normalize().scale(lengths[i]).add(a))
     }
 }
 
-function rootToFinal(){
+function forward(vectors:Vector[],anchor:Vector){
+    var lengths = calcSegmentLengths(vectors)
 
+    first(vectors).overwrite(anchor)
+    for(var i = 1; i < vectors.length; i++){
+        vectors[i].overwrite(vectors[i].to(vectors[i + 1]).normalize().scale(lengths[i]))
+    }
+}
+
+function calcSegmentLengths(vectors:Vector[]){
+    var lengths:number[] = []
+    for(var i = 0; i < vectors.length - 2; i++){
+        lengths.push(vectors[i].to(vectors[i + 1]).length())
+    }
+    return lengths
 }
