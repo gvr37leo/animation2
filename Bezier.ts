@@ -158,29 +158,26 @@ function FK(bones:Vector[]):Vector{
     return bones.reduce((p,c) => p.add(c),new Vector(0,0))
 }
 
-//bones are relative
-function FABRIK(bones:Vector[],endEffector:Vector,maxError:number):Vector[]{
+function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number):Vector[]{
     var maxIterations = 10
-    var end = FK(bones)
-    var totallength = bones.reduce((p,c) => p += c.length(),0)
-    var lengths = calcSegmentLengths(bones)
-    if(totallength < first(bones).to(endEffector).length()){
+    var end = FK(vectors)
+    var lengths = calcSegmentLengths(vectors)
+    var totallength = lengths.reduce((p,c) => p + c,0)
+    
+    if(totallength < first(vectors).to(endEffector).length()){
         for(var i = 0; i < maxIterations && end.to(endEffector).length() > maxError; i++){
-            backward(bones,endEffector,lengths)
-            forward(bones,endEffector,lengths)
+            backward(vectors,endEffector,lengths)
+            forward(vectors,endEffector,lengths)
         }
     }else{
-        for(var bone of bones){
+        for(var bone of vectors){
             bone = bone.to(endEffector).normalize().scale(bone.length())
         }
     }
-    return bones
+    return vectors
 }
 
-//vectors are absolute 
-function backward(vectors:Vector[],endEffector:Vector,segmentLengths:number[]){
-    var lengths = calcSegmentLengths(vectors)
-
+function backward(vectors:Vector[],endEffector:Vector,lengths:number[]){
     last(vectors).overwrite(endEffector)
     for(var i = vectors.length - 2; i >= 0; i--){
         var a = vectors[i + 1]
@@ -189,8 +186,7 @@ function backward(vectors:Vector[],endEffector:Vector,segmentLengths:number[]){
     }
 }
 
-function forward(vectors:Vector[],anchor:Vector){
-    var lengths = calcSegmentLengths(vectors)
+function forward(vectors:Vector[],anchor:Vector,lengths:number[]){
 
     first(vectors).overwrite(anchor)
     for(var i = 1; i < vectors.length; i++){
