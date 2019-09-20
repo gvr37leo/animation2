@@ -121,9 +121,9 @@ class BezierControl{
         this.handles.forEach(h => {
             h.draw(this.ctxt)
         })
-        this.line(this.ctxt,[this.handles[0].pos.get(),this.handles[1].pos.get(),])
-        this.line(this.ctxt,[this.handles[2].pos.get(),this.handles[3].pos.get()])
-        this.line(this.ctxt, this.visualCurve)
+        line(this.ctxt,[this.handles[0].pos.get(),this.handles[1].pos.get(),])
+        line(this.ctxt,[this.handles[2].pos.get(),this.handles[3].pos.get()])
+        line(this.ctxt, this.visualCurve)
     }
 
     nall(arr:Vector[]){
@@ -142,16 +142,7 @@ class BezierControl{
         return v
     }
 
-    line(ctxt,line:Vector[]){
-        ctxt.beginPath();
-        var f = first(line)
-        ctxt.moveTo(f.x,f.y)
-        for(var i = 1; i < line.length; i++){
-            var p = line[i]
-            ctxt.lineTo(p.x,p.y)
-        }
-        ctxt.stroke();
-    }
+    
 }
 
 function FK(bones:Vector[]):Vector{
@@ -171,8 +162,10 @@ function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number):Vector[]{
         }
     }else{
         var dir = anchor.to(endEffector).normalize()
+        var current = new Vector(0,0)
         for(var i = 1; i < vectors.length; i++){
-            vectors[i] = dir.c().scale(lengths[i]).add(anchor)
+            vectors[i] = dir.c().scale(lengths[i - 1]).add(anchor).add(current)
+            current.add(vectors[i])
         }
     }
     return vectors
