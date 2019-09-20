@@ -160,43 +160,46 @@ function FK(bones:Vector[]):Vector{
 
 function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number):Vector[]{
     var maxIterations = 10
-    var end = FK(vectors)
     var lengths = calcSegmentLengths(vectors)
     var totallength = lengths.reduce((p,c) => p + c,0)
+    var anchor = first(vectors).c()
     
-    if(totallength < first(vectors).to(endEffector).length()){
-        for(var i = 0; i < maxIterations && end.to(endEffector).length() > maxError; i++){
+    if(totallength > first(vectors).to(endEffector).length()){
+        for(var i = 0; i < maxIterations && last(vectors).to(endEffector).length() > maxError; i++){
             backward(vectors,endEffector,lengths)
-            forward(vectors,endEffector,lengths)
+            forward(vectors,anchor,lengths)
         }
     }else{
-        for(var bone of vectors){
-            bone = bone.to(endEffector).normalize().scale(bone.length())
+        var dir = anchor.to(endEffector).normalize()
+        for(var i = 1; i < vectors.length; i++){
+            vectors[i] = dir.c().scale(lengths[i]).add(anchor)
         }
     }
     return vectors
+
 }
 
 function backward(vectors:Vector[],endEffector:Vector,lengths:number[]){
     last(vectors).overwrite(endEffector)
     for(var i = vectors.length - 2; i >= 0; i--){
-        var a = vectors[i + 1]
-        var b = vectors[i]
-        a.overwrite(b.to(a).normalize().scale(lengths[i]).add(a))
+        var a = vectors[i + 1]//towards end
+        var b = vectors[i]//towards anchor
+        b.overwrite(a.c().add(a.to(b).normalize().scale(lengths[i])))
     }
 }
 
 function forward(vectors:Vector[],anchor:Vector,lengths:number[]){
-
     first(vectors).overwrite(anchor)
     for(var i = 1; i < vectors.length; i++){
-        vectors[i].overwrite(vectors[i].to(vectors[i + 1]).normalize().scale(lengths[i]))
+        var a = vectors[i - 1]//towards anchor
+        var b = vectors[i]//towards end
+        b.overwrite(a.c().add(a.to(b).normalize().scale(lengths[i - 1])))
     }
 }
 
 function calcSegmentLengths(vectors:Vector[]){
     var lengths:number[] = []
-    for(var i = 0; i < vectors.length - 2; i++){
+    for(var i = 0; i < vectors.length - 1; i++){
         lengths.push(vectors[i].to(vectors[i + 1]).length())
     }
     return lengths

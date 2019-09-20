@@ -11,7 +11,7 @@ reddot.animType = AnimType.repeat
 reddot.stopwatch.start()
 
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
-var bc = new BezierControl()
+// var bc = new BezierControl()
 
 
 loop(dt => {
@@ -20,7 +20,11 @@ loop(dt => {
     // bc.denormalize(pos)
     // pos.draw(bc.ctxt)
 })
-
+FABRIK([
+    new Vector(0,0),
+    new Vector(10,10),
+    new Vector(20,10),
+], new Vector(20,0), 0.01)
 
 function first<T>(arr:T[]):T{
     return arr[0]
