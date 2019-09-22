@@ -22,6 +22,10 @@ class Bezier{
         return waypoints;
     }
 
+    static computeManyWaypoints(numberOfWaypoints:number,controlpoints:Vector):Vector[]{
+
+    }
+
     static calcLength(waypoints:Vector[]){
         var length = 0;
         for(var i = 1; i < waypoints.length; i++){
@@ -149,8 +153,7 @@ function FK(bones:Vector[]):Vector{
     return bones.reduce((p,c) => p.add(c),new Vector(0,0))
 }
 
-function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number):Vector[]{
-    var maxIterations = 10
+function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number,maxIterations:number):Vector[]{
     var lengths = calcSegmentLengths(vectors)
     var totallength = lengths.reduce((p,c) => p + c,0)
     var anchor = first(vectors).c()
@@ -164,8 +167,9 @@ function FABRIK(vectors:Vector[],endEffector:Vector,maxError:number):Vector[]{
         var dir = anchor.to(endEffector).normalize()
         var current = new Vector(0,0)
         for(var i = 1; i < vectors.length; i++){
-            vectors[i] = dir.c().scale(lengths[i - 1]).add(anchor).add(current)
-            current.add(vectors[i])
+            var offset = dir.c().scale(lengths[i - 1])
+            vectors[i] = offset.c().add(anchor).add(current)
+            current.add(offset)
         }
     }
     return vectors

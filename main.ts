@@ -15,19 +15,14 @@ var ctxt = res.ctxt
 var canvas = res.canvas
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
 // var bc = new BezierControl()
-var tent = [
-    new Vector(0,0),
-    new Vector(100,100),
-    new Vector(200,200),
-]
-var mousepos = new Vector(300,300)
+
+var mousepos = new Vector(11, 10)
 document.addEventListener('mousemove', e => {
     mousepos = getMousePos(canvas,e)
 })
 loop(dt => {
+
     ctxt.clearRect(0,0,400,400)
-    FABRIK(tent,mousepos,0.01)
-    line(ctxt,tent)
     // var pos = Bezier.tween(reddot.get(),bc.normalizedCachedXCurve)
     // bc.draw()
     // bc.denormalize(pos)
@@ -36,3 +31,22 @@ loop(dt => {
 // FABRIK(tent, new Vector(20,0), 0.01)
 
 
+class SlopedAnimation{
+    anim:Anim
+    controlPoints:Vector[]
+    private path:Vector[]
+
+    constructor(){
+
+    }
+
+    cacheControlPoints(){
+        Bezier.computeWaypoints()
+    }
+
+    get(){
+        Bezier.tween(this.anim.get(),this.path)
+        
+    }
+
+}
