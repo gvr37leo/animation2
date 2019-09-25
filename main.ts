@@ -6,6 +6,8 @@
 /// <reference path="handle.ts" />
 /// <reference path="clickmanager.ts" />
 /// <reference path="projectutils.ts" />
+/// <reference path="smoothAnimation.ts" />
+
 
 var reddot = new Anim()
 reddot.animType = AnimType.repeat
@@ -15,6 +17,7 @@ var ctxt = res.ctxt
 var canvas = res.canvas
 var screensize = new Vector(document.documentElement.clientWidth,document.documentElement.clientHeight)
 // var bc = new BezierControl()
+var anim = new SmoothAnimation()
 
 var mousepos = new Vector(11, 10)
 document.addEventListener('mousemove', e => {
@@ -31,22 +34,3 @@ loop(dt => {
 // FABRIK(tent, new Vector(20,0), 0.01)
 
 
-class SlopedAnimation{
-    anim:Anim
-    controlPoints:Vector[]
-    private path:Vector[]
-
-    constructor(){
-
-    }
-
-    cacheControlPoints(){
-        Bezier.computeWaypoints()
-    }
-
-    get(){
-        Bezier.tween(this.anim.get(),this.path)
-        
-    }
-
-}
