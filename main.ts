@@ -17,7 +17,7 @@ var screensize = new Vector(document.documentElement.clientWidth,document.docume
 // var bc = new BezierControl()
 var anim = new SmoothAnimation(SmoothAnimation.easeInEaseOut)
 anim.animType = AnimType.pingpong
-anim.duration = 1000 / 2.667
+anim.duration = 1000
 anim.stopwatch.start()
 
 
