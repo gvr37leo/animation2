@@ -16,3 +16,23 @@ function line(ctxt:CanvasRenderingContext2D,points:Vector[]){
     }
     ctxt.stroke();
 }
+
+
+
+function cacheSin(precision:number){
+    for(var i = 0; i < precision;i++){
+        sinCache[i] = Math.sin((i / precision) * TAU)
+    }
+}
+
+var sinCache = []
+cacheSin(360)
+
+function sinCached(radians:number){
+    var percentage = mod(radians,TAU) / TAU
+    var abs = percentage * sinCache.length
+    var bot = Math.floor(abs)
+    var top = Math.ceil(abs)
+    var remains = abs - bot
+    return lerp(sinCache[bot],sinCache[top % sinCache.length],remains)
+}
