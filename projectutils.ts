@@ -36,3 +36,21 @@ function sinCached(radians:number){
     var remains = abs - bot
     return lerp(sinCache[bot],sinCache[top % sinCache.length],remains)
 }
+
+function cacheCos(precision:number){
+    for(var i = 0; i < precision;i++){
+        cosCache[i] = Math.cos((i / precision) * TAU)
+    }
+}
+
+var cosCache = []
+cacheCos(360)
+
+function cosCached(radians:number){
+    var percentage = mod(radians,TAU) / TAU
+    var abs = percentage * cosCache.length
+    var bot = Math.floor(abs)
+    var top = Math.ceil(abs)
+    var remains = abs - bot
+    return lerp(cosCache[bot],cosCache[top % cosCache.length],remains)
+}
